@@ -23,7 +23,7 @@ def parseLine(line):
 
 
 def mean(values):
-    return sum(values) / len(values)
+    return sum(values) / float(len(values))
 
 
 def meanSession(line):
@@ -35,16 +35,21 @@ def meanSession(line):
     essays = {}
     means = []
     # Assigne un bin à l'essai correspondant (un essai = 60 bins)
+    # dans un dictionnaire (structure de donnee 'cle : valeur')
+    # A la fin,
+    # essays = {
+    #    1: [0, 3, 0, 2, 2, 1, 0, ...],
+    #    2: [0,02, 2, 1, 1, 0, 3, ...],
+    #    3: ...
+    # }
     for i, bin in enumerate(session):
         e = i / 60
         if e in essays:
             essays[e].append(bin)
         else:
             essays[e] = [bin]
-    for k, v in essays.iteritems():
-        print k, v
     for i in range(60):
-        means.append(mean([v[i] for k, v in essays.iteritems()]))
+        means.append(mean([v[i] for v in essays.values()]))
     return means
 
 
