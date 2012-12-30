@@ -2,6 +2,7 @@
 # -*- coding:utf-8
 
 import sys
+import math
 import numpy
 
 
@@ -44,7 +45,7 @@ class Session:
     def meanActivity(self, factor=1):
         return numpy.mean(self.meansBin(factor))
 
-    def timeNorm(self, step=1, wdw=2, factor=1):
+    def smooth(self, step=1, wdw=2, factor=1):
         output = []
         data = list(numpy.array(self.meansBin(factor)) / self.meanActivity(factor))
         for pos in range(0, len(data), step):
@@ -53,11 +54,47 @@ class Session:
 
 
 
+class SessionsSet(list):
+    def __init__(self, sessions=[]):
+        super(SessionsSet, self).__init__(sessions)
+    
+    def meanMeansBin(self, factor=1):
+        output = numpy.zeros( len(self[0].meansBin(factor)) )
+        for session in self:
+            output += numpy.array(session.meansBin(factor))
+        output /= len(self)
+        return list(output)
+
+    def meanMeanActivity(self, factor=1):
+        output = 0
+        for session in self:
+            output += session.meanActivity(factor)
+        output /= len(self)
+        return output
+
+    def meanSmooth(self, step=1, wdw=2, factor=1):
+        output = numpy.zeros( len(self[0].smooth(step, wdw, factor)) )
+        for session in self:
+            output += numpy.array(session.smooth(step, wdw, factor))
+        output /= len(self)
+        return list(output)
+
+    def semSmooth(self, step=1, wdw=2, factor=1):
+        output = []
+        for ibin in zip(*[s.smooth(step, wdw, factor) for s in self]):
+            output.append(sem(ibin))
+        return output
+
+
 def tryInt(value):
     try:
         return int(value)
     except:
         return value
+
+
+def sem(array):
+    return numpy.std(array) / math.sqrt(len(array))
 
 
 
@@ -74,14 +111,26 @@ def main():
         nbin = int(sys.argv[2])
         
         # Iterate over each line of the given file object and create Session objects
-        sessions = []
+        sessions = SessionsSet()
         for line in myfile:
             if not line.strip().startswith('Project'):
                 sessions.append(Session(line, nbin))
         
-        for session in sessions:
-            output = session.metadata + session.timeNorm(factor=2)
-            print '\t'.join(map(str, output))
+        exp_ids = [1, 3, 7, 2, 4, 6]
+        ctrl_ids = [5, 9, 11, 8, 10, 12]
+
+        exp_sessions = SessionsSet([s for s in sessions if s.subject in exp_ids])
+        ctrl_sessions = SessionsSet([s for s in sessions if s.subject in ctrl_ids])
+
+        data_exp = zip(exp_sessions.meanSmooth(factor=2), exp_sessions.semSmooth(factor=2), ['experimental']*60)
+        data_ctrl = zip(ctrl_sessions.meanSmooth(factor=2), ctrl_sessions.semSmooth(factor=2), ['control']*60)
+
+        for dataset in [data_ctrl, data_exp]:
+            for i in dataset:
+                print '\t'.join(map(str, i))
+        #for session in sessions:
+            #output = session.metadata + session.smooth(factor=2)
+            #print '\t'.join(map(str, output))
 
     else:
         print "Nombre d'arguments insatisfaisant : ./parse.py <nom du fichier> <nombre de bins>"
