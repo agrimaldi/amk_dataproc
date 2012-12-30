@@ -6,6 +6,8 @@ import sys
 
 class Session:
     def __init__(self, line, nbin):
+        self.line = line
+        self.nbin = nbin
         self.parseLine(line, nbin)
 
     def parseLine(self, line, nbin):
@@ -24,6 +26,13 @@ class Session:
                 self.essays[e].append(bin)
             else:
                 self.essays[e] = [bin]
+
+    def mean(self):
+        means = []
+        for i in range(self.nbin):
+            means.append(mean([v[i] for v in self.essays.values()]))
+        return means
+
 
 
 
