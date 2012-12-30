@@ -44,6 +44,12 @@ class Session:
     def meanActivity(self, factor=1):
         return numpy.mean(self.meansBin(factor))
 
+    def timeNorm(self, step=1, wdw=2, factor=1):
+        output = []
+        data = list(numpy.array(self.meansBin(factor)) / self.meanActivity(factor))
+        for pos in range(0, len(data), step):
+            output.append(numpy.mean(data[pos:pos + wdw]))
+        return output
 
 
 
@@ -74,7 +80,7 @@ def main():
                 sessions.append(Session(line, nbin))
         
         for session in sessions:
-            output = session.metadata + session.meansBin + [session.meanActivity]
+            output = session.metadata + session.timeNorm(factor=2)
             print '\t'.join(map(str, output))
 
     else:
