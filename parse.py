@@ -53,35 +53,6 @@ def space(line):
 	return av
 
 
-def meanSession(line, nbin=60):
-    '''Computes the mean of the bins of each trials for the mean_session
-    '''
-    # Recuperation des valeurs "bin"
-    session = line[9:]
-    # Initialize dont la longueur = nombres d'essais
-    essays = {}
-    means = []
-    #Donne le numero du sujet
-    rat = line[6]
-    # Assigne un bin à l'essai correspondant (un essai = 60 bins)
-    # dans un dictionnaire (structure de donnee 'cle : valeur')
-    # A la fin,
-    # essays = {
-    #    1: [0, 3, 0, 2, 2, 1, 0, ...],
-    #    2: [0,02, 2, 1, 1, 0, 3, ...],
-    #    3: ...
-    # }
-    for i, bin in enumerate(session):
-        e = i / nbin
-        if e in essays:
-            essays[e].append(bin)
-        else:
-            essays[e] = [bin]
-    for i in range(nbin):
-        means.append(mean([v[i] for v in essays.values()]))
-    return [rat,means]
-
-
 def main():
 
     # Check the number of command line arguments
