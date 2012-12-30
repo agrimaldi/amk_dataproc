@@ -2,6 +2,7 @@
 # -*- coding:utf-8
 
 import sys
+import numpy
 
 
 class Session:
@@ -9,6 +10,13 @@ class Session:
         self.line = line
         self.nbin = nbin
         self.parseLine(line, nbin)
+
+    @property
+    def metadata(self):
+        return [
+            self.project, self.userid, self.protocol, self.session,
+            self.station, self.run, self.subject, self.rundate, self.runtime   
+        ]
 
     def parseLine(self, line, nbin):
         '''Parse and sanitize a line read from a file
@@ -27,23 +35,14 @@ class Session:
             else:
                 self.essays[e] = [bin]
 
-    @property
-    def metadata(self):
-        return [
-            self.project, self.userid, self.protocol, self.session,
-            self.station, self.run, self.subject, self.rundate, self.runtime   
-        ]
-
-    @property
-    def meansBin(self):
+    def meansBin(self, factor=1):
         means = []
         for i in range(self.nbin):
-            means.append(mean([v[i] for v in self.essays.values()]))
+            means.append(numpy.mean([v[i] for v in self.essays.values()]) / factor)
         return means
 
-    @property
-    def meanActivity(self):
-        return mean(self.meansBin)
+    def meanActivity(self, factor=1):
+        return numpy.mean(self.meansBin(factor))
 
 
 
@@ -53,10 +52,6 @@ def tryInt(value):
         return int(value)
     except:
         return value
-
-
-def mean(values):
-    return sum(values) / float(len(values))
 
 
 
