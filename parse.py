@@ -107,18 +107,20 @@ def main(args):
         if not line.strip().startswith('Project'):
             sessions.append(Session(line, args.nbin))
     
-    exp_ids = [1, 3, 7, 2, 4, 6]
-    ctrl_ids = [5, 9, 11, 8, 10, 12]
 
-    exp_sessions = SessionsSet([s for s in sessions if s.subject in exp_ids])
-    ctrl_sessions = SessionsSet([s for s in sessions if s.subject in ctrl_ids])
 
-    data_exp = zip(exp_sessions.meanSmooth(factor=2), exp_sessions.semSmooth(factor=2), ['experimental']*60)
-    data_ctrl = zip(ctrl_sessions.meanSmooth(factor=2), ctrl_sessions.semSmooth(factor=2), ['control']*60)
+    #exp_ids = [1, 3, 7, 2, 4, 6]
+    #ctrl_ids = [5, 9, 11, 8, 10, 12]
 
-    for dataset in [data_ctrl, data_exp]:
-        for i in dataset:
-            print '\t'.join(map(str, i))
+    #exp_sessions = SessionsSet([s for s in sessions if s.subject in exp_ids])
+    #ctrl_sessions = SessionsSet([s for s in sessions if s.subject in ctrl_ids])
+
+    #data_exp = zip(exp_sessions.meanSmooth(factor=2), exp_sessions.semSmooth(factor=2), ['experimental']*60)
+    #data_ctrl = zip(ctrl_sessions.meanSmooth(factor=2), ctrl_sessions.semSmooth(factor=2), ['control']*60)
+
+    #for dataset in [data_ctrl, data_exp]:
+        #for i in dataset:
+            #print '\t'.join(map(str, i))
     #for session in sessions:
         #output = session.metadata + session.smooth(factor=2)
         #print '\t'.join(map(str, output))
@@ -173,12 +175,39 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(parents=[base_parser])
     
     # Sub-parsers
-    subparsers = parser.add_subparsers()
-    parser_meansBin = subparsers.add_parser('meansBin', parents=[base_parser])
-    parser_meanActivity = subparsers.add_parser('meanActivity', parents=[base_parser])
-    parser_meanMeansBin = subparsers.add_parser('meanMeansBin', parents=[base_parser])
-    parser_meanMeanActivity = subparsers.add_parser('meanMeanActivity', parents=[base_parser])
-    parser_smooth = subparsers.add_parser('smooth', parents=[base_parser, smooth_parser])
-    parser_meanSmooth = subparsers.add_parser('meanSmooth', parents=[base_parser, smooth_parser])
+    subparsers = parser.add_subparsers(
+        title='subcommands',
+        dest='subcmd'
+    )
+    parser_meansBin = subparsers.add_parser(
+        'meansBin',
+        parents=[base_parser],
+        help='Compute the means in each bin across trials'
+    )
+    parser_meanActivity = subparsers.add_parser(
+        'meanActivity',
+        parents=[base_parser],
+        help='Compute the activity associated to each subject'
+    )
+    parser_meanMeansBin = subparsers.add_parser(
+        'meanMeansBin',
+        parents=[base_parser],
+        help='Compute the mean of meansBin across subjects'
+    )
+    parser_meanMeanActivity = subparsers.add_parser(
+        'meanMeanActivity',
+        parents=[base_parser],
+        help='Compute the mean of activities across subjects'
+    )
+    parser_smooth = subparsers.add_parser(
+        'smooth',
+        parents=[base_parser, smooth_parser],
+        help='Compute the smoothed means in each bin across trials'
+    )
+    parser_meanSmooth = subparsers.add_parser(
+        'meanSmooth',
+        parents=[base_parser, smooth_parser],
+        help='Compute the mean of smoothed meanBins across subjects'
+    )
 
     main(parser.parse_args())
