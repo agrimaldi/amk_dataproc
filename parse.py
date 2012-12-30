@@ -65,8 +65,12 @@ class SessionsSet(list):
         output /= len(self)
         return list(output)
 
-    def meanMeanActivity(self):
-        pass
+    def meanMeanActivity(self, factor=1):
+        output = 0
+        for session in self:
+            output += session.meanActivity(factor)
+        output /= len(self)
+        return output
 
     def meanTimeNorm(self, step=1, wdw=2, factor=1):
         output = numpy.zeros( len(self[0].timeNorm(step, wdw, factor)) )
