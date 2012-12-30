@@ -54,6 +54,30 @@ class Session:
 
 
 
+class SessionsSet(list):
+    def __init__(self, sessions=[]):
+        super(SessionsSet, self).__init__(sessions)
+    
+    def meanMeansBin(self):
+        pass
+
+    def meanMeanActivity(self):
+        pass
+
+    def meanTimeNorm(self, step=1, wdw=2, factor=1):
+        output = numpy.zeros( len(self[0].timeNorm(step, wdw, factor)) )
+        for session in self:
+            output += numpy.array(session.timeNorm(step, wdw, factor))
+        output /= len(self)
+        return list(output)
+
+    def semTimeNorm(self, step=1, wdw=2, factor=1):
+        output = []
+        for ibin in zip(*[s.timeNorm(step, wdw, factor) for s in self]):
+            output.append(sem(ibin))
+        return output
+
+
 def tryInt(value):
     try:
         return int(value)
@@ -79,7 +103,7 @@ def main():
         nbin = int(sys.argv[2])
         
         # Iterate over each line of the given file object and create Session objects
-        sessions = []
+        sessions = SessionsSet()
         for line in myfile:
             if not line.strip().startswith('Project'):
                 sessions.append(Session(line, nbin))
