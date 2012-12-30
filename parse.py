@@ -58,8 +58,12 @@ class SessionsSet(list):
     def __init__(self, sessions=[]):
         super(SessionsSet, self).__init__(sessions)
     
-    def meanMeansBin(self):
-        pass
+    def meanMeansBin(self, factor=1):
+        output = numpy.zeros( len(self[0].meansBin(factor)) )
+        for session in self:
+            output += numpy.array(session.meansBin(factor))
+        output /= len(self)
+        return list(output)
 
     def meanMeanActivity(self):
         pass
