@@ -45,7 +45,7 @@ class Session:
     def meanActivity(self, factor=1):
         return numpy.mean(self.meansBin(factor))
 
-    def timeNorm(self, step=1, wdw=2, factor=1):
+    def smooth(self, step=1, wdw=2, factor=1):
         output = []
         data = list(numpy.array(self.meansBin(factor)) / self.meanActivity(factor))
         for pos in range(0, len(data), step):
@@ -72,16 +72,16 @@ class SessionsSet(list):
         output /= len(self)
         return output
 
-    def meanTimeNorm(self, step=1, wdw=2, factor=1):
-        output = numpy.zeros( len(self[0].timeNorm(step, wdw, factor)) )
+    def meanSmooth(self, step=1, wdw=2, factor=1):
+        output = numpy.zeros( len(self[0].smooth(step, wdw, factor)) )
         for session in self:
-            output += numpy.array(session.timeNorm(step, wdw, factor))
+            output += numpy.array(session.smooth(step, wdw, factor))
         output /= len(self)
         return list(output)
 
-    def semTimeNorm(self, step=1, wdw=2, factor=1):
+    def semSmooth(self, step=1, wdw=2, factor=1):
         output = []
-        for ibin in zip(*[s.timeNorm(step, wdw, factor) for s in self]):
+        for ibin in zip(*[s.smooth(step, wdw, factor) for s in self]):
             output.append(sem(ibin))
         return output
 
