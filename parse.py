@@ -52,10 +52,6 @@ def mean(values):
     return sum(values) / float(len(values))
 
 
-def space(line):
-	av = mean(line[9:])
-	return av
-
 
 def main():
 
