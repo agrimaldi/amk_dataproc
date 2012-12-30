@@ -27,11 +27,15 @@ class Session:
             else:
                 self.essays[e] = [bin]
 
-    def mean(self):
+    def meansBin(self):
         means = []
         for i in range(self.nbin):
             means.append(mean([v[i] for v in self.essays.values()]))
         return means
+
+    def meanActivity(self):
+        meansBin = self.meansBin()
+        return mean(meansBin)
 
 
 
