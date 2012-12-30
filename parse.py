@@ -27,16 +27,23 @@ class Session:
             else:
                 self.essays[e] = [bin]
 
+    @property
+    def metadata(self):
+        return [
+            self.project, self.userid, self.protocol, self.session,
+            self.station, self.run, self.subject, self.rundate, self.runtime   
+        ]
+
+    @property
     def meansBin(self):
         means = []
         for i in range(self.nbin):
             means.append(mean([v[i] for v in self.essays.values()]))
         return means
 
+    @property
     def meanActivity(self):
-        meansBin = self.meansBin()
-        return mean(meansBin)
-
+        return mean(self.meansBin)
 
 
 
@@ -71,6 +78,9 @@ def main():
             if not line.strip().startswith('Project'):
                 sessions.append(Session(line, nbin))
         
+        for session in sessions:
+            output = session.metadata + session.meansBin + [session.meanActivity]
+            print '\t'.join(map(str, output))
 
     else:
         print "Nombre d'arguments insatisfaisant : ./parse.py <nom du fichier> <nombre de bins>"
