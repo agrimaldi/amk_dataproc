@@ -2,6 +2,7 @@
 # -*- coding:utf-8
 
 import sys
+import argparse
 import math
 import numpy
 
@@ -98,43 +99,86 @@ def sem(array):
 
 
 
-def main():
+def main(args):
 
-    # Check the number of command line arguments
-    if len(sys.argv) == 3:
+    # Iterate over each line of the given file object and create Session objects
+    sessions = SessionsSet()
+    for line in args.infile:
+        if not line.strip().startswith('Project'):
+            sessions.append(Session(line, args.nbin))
+    
+    exp_ids = [1, 3, 7, 2, 4, 6]
+    ctrl_ids = [5, 9, 11, 8, 10, 12]
 
-        # Open the file in readonly mode
-        # this returns a file object
-        myfile = open(sys.argv[1], 'r')
-	
-	# Specify bin count / essay as a third argument
-        nbin = int(sys.argv[2])
-        
-        # Iterate over each line of the given file object and create Session objects
-        sessions = SessionsSet()
-        for line in myfile:
-            if not line.strip().startswith('Project'):
-                sessions.append(Session(line, nbin))
-        
-        exp_ids = [1, 3, 7, 2, 4, 6]
-        ctrl_ids = [5, 9, 11, 8, 10, 12]
+    exp_sessions = SessionsSet([s for s in sessions if s.subject in exp_ids])
+    ctrl_sessions = SessionsSet([s for s in sessions if s.subject in ctrl_ids])
 
-        exp_sessions = SessionsSet([s for s in sessions if s.subject in exp_ids])
-        ctrl_sessions = SessionsSet([s for s in sessions if s.subject in ctrl_ids])
+    data_exp = zip(exp_sessions.meanSmooth(factor=2), exp_sessions.semSmooth(factor=2), ['experimental']*60)
+    data_ctrl = zip(ctrl_sessions.meanSmooth(factor=2), ctrl_sessions.semSmooth(factor=2), ['control']*60)
 
-        data_exp = zip(exp_sessions.meanSmooth(factor=2), exp_sessions.semSmooth(factor=2), ['experimental']*60)
-        data_ctrl = zip(ctrl_sessions.meanSmooth(factor=2), ctrl_sessions.semSmooth(factor=2), ['control']*60)
+    for dataset in [data_ctrl, data_exp]:
+        for i in dataset:
+            print '\t'.join(map(str, i))
+    #for session in sessions:
+        #output = session.metadata + session.smooth(factor=2)
+        #print '\t'.join(map(str, output))
 
-        for dataset in [data_ctrl, data_exp]:
-            for i in dataset:
-                print '\t'.join(map(str, i))
-        #for session in sessions:
-            #output = session.metadata + session.smooth(factor=2)
-            #print '\t'.join(map(str, output))
-
-    else:
-        print "Nombre d'arguments insatisfaisant : ./parse.py <nom du fichier> <nombre de bins>"
 
 
 if __name__ == '__main__':
-    main()
+
+    # Base parser, for file and global options
+    base_parser = argparse.ArgumentParser(add_help=False)
+    base_parser.add_argument(
+        '-i', '--infile', dest='infile',
+        type=argparse.FileType('r'),
+        default=sys.stdin,
+        help='Input file'
+    )
+    base_parser.add_argument(
+        '-o', '--outfile', dest='outfile',
+        type=argparse.FileType('w'),
+        default=sys.stdout,
+        help='Output file'
+    )
+    base_parser.add_argument(
+        '-n', '--nbin', dest='nbin',
+        type=int,
+        default=60,
+        help='Number of bins'
+    )
+    base_parser.add_argument(
+        '-f', '--factor', dest='factor',
+        type=int,
+        default=1,
+        help='Factor to apply to each bin'
+    )
+
+    # Smooth parser for smoothing specific options
+    smooth_parser = argparse.ArgumentParser(add_help=False)
+    smooth_parser.add_argument(
+        '-s', '--step', dest='step',
+        type=int,
+        default=1,
+        help='Step'
+    )
+    smooth_parser.add_argument(
+        '-w', '--window', dest='window',
+        type=int,
+        default=2,
+        help='Window size'
+    )
+
+    # Main parser
+    parser = argparse.ArgumentParser(parents=[base_parser])
+    
+    # Sub-parsers
+    subparsers = parser.add_subparsers()
+    parser_meansBin = subparsers.add_parser('meansBin', parents=[base_parser])
+    parser_meanActivity = subparsers.add_parser('meanActivity', parents=[base_parser])
+    parser_meanMeansBin = subparsers.add_parser('meanMeansBin', parents=[base_parser])
+    parser_meanMeanActivity = subparsers.add_parser('meanMeanActivity', parents=[base_parser])
+    parser_smooth = subparsers.add_parser('smooth', parents=[base_parser, smooth_parser])
+    parser_meanSmooth = subparsers.add_parser('meanSmooth', parents=[base_parser, smooth_parser])
+
+    main(parser.parse_args())
