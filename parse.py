@@ -2,6 +2,7 @@
 # -*- coding:utf-8
 
 import sys
+import math
 import numpy
 
 
@@ -58,6 +59,10 @@ def tryInt(value):
         return int(value)
     except:
         return value
+
+
+def sem(array):
+    return numpy.std(array) / math.sqrt(len(array))
 
 
 
