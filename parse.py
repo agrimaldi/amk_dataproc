@@ -116,9 +116,21 @@ def main():
             if not line.strip().startswith('Project'):
                 sessions.append(Session(line, nbin))
         
-        for session in sessions:
-            output = session.metadata + session.timeNorm(factor=2)
-            print '\t'.join(map(str, output))
+        exp_ids = [1, 3, 7, 2, 4, 6]
+        ctrl_ids = [5, 9, 11, 8, 10, 12]
+
+        exp_sessions = SessionsSet([s for s in sessions if s.subject in exp_ids])
+        ctrl_sessions = SessionsSet([s for s in sessions if s.subject in ctrl_ids])
+
+        data_exp = zip(exp_sessions.meanSmooth(factor=2), exp_sessions.semSmooth(factor=2), ['experimental']*60)
+        data_ctrl = zip(ctrl_sessions.meanSmooth(factor=2), ctrl_sessions.semSmooth(factor=2), ['control']*60)
+
+        for dataset in [data_ctrl, data_exp]:
+            for i in dataset:
+                print '\t'.join(map(str, i))
+        #for session in sessions:
+            #output = session.metadata + session.smooth(factor=2)
+            #print '\t'.join(map(str, output))
 
     else:
         print "Nombre d'arguments insatisfaisant : ./parse.py <nom du fichier> <nombre de bins>"
