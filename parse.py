@@ -4,6 +4,30 @@
 import sys
 
 
+class Session:
+    def __init__(self, line, nbin):
+        self.parseLine(line, nbin)
+
+    def parseLine(self, line, nbin):
+        '''Parse and sanitize a line read from a file
+        (converting fields to integers if possible)
+        '''
+        columns = line.strip().split('\t')
+        self.project, self.userid, self.protocol, self.session, \
+                self.station, self.run, self.subject, self.rundate, \
+                self.runtime = map(tryInt, columns[:9])
+        session = map(tryInt, columns[9:])
+        self.essays = {}
+        for i, bin in enumerate(session):
+            e = i / nbin
+            if e in self.essays:
+                self.essays[e].append(bin)
+            else:
+                self.essays[e] = [bin]
+
+
+
+
 def tryInt(value):
     try:
         return int(value)
@@ -11,23 +35,14 @@ def tryInt(value):
         return value
 
 
-def parseLine(line):
-    '''Parse and sanitize a line read from a file
-    (converting fields to integers if possible)
-    '''
-    output = []
-    columns = line.strip().split('\t')
-    for column in columns:
-        output.append(tryInt(column))
-    return output
-
-
 def mean(values):
     return sum(values) / float(len(values))
+
 
 def space(line):
 	av = mean(line[9:])
 	return av
+
 
 def meanSession(line, nbin=60):
     '''Computes the mean of the bins of each trials for the mean_session
@@ -70,16 +85,15 @@ def main():
 	# Specify bin count / essay as a third argument
         nbin = int(sys.argv[2])
         
-        # Iterate over each line of the given file object
+        # Iterate over each line of the given file object and create Session objects
+        sessions = []
         for line in myfile:
-            columns = parseLine(line)
-            if columns[0] != 'Project':
-                subject, mean_session = meanSession(columns, nbin)
-		spatial = space(columns)
-                print str(subject) + '\t' + str(spatial) + '\t' + '\t'.join(map(str, mean_session))  
+            if not line.strip().startswith('Project'):
+                sessions.append(Session(line, nbin))
+        
 
     else:
-        print "Nombre d'arguments insatisfaisant : ./parse.py <nom du fichier>"
+        print "Nombre d'arguments insatisfaisant : ./parse.py <nom du fichier> <nombre de bins>"
 
 
 if __name__ == '__main__':
