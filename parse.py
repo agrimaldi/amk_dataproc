@@ -107,7 +107,23 @@ def main(args):
         if not line.strip().startswith('Project'):
             sessions.append(Session(line, args.nbin))
     
-
+    if args.subcmd == 'meansBin':
+        for session in sessions:
+            output = session.metadata + session.meansBin(factor=args.factor)
+            print >>args.outfile, '\t'.join(map(str, output))
+    if args.subcmd == 'meanActivity':
+        pass
+    if args.subcmd == 'meanMeansBin':
+        pass
+    if args.subcmd == 'meanMeanActivity':
+        pass
+    if args.subcmd == 'smooth':
+        for session in sessions:
+            output = session.metadata + session.smooth(step=args.step, wdw=args.window, factor=args.factor)
+            print >>args.outfile, '\t'.join(map(str, output))
+    if args.subcmd == 'meanSmooth':
+        output = sessions.meanSmooth(step=args.step, wdw=args.window, factor=args.factor)
+        print >>args.outfile, '\n'.join(map(str, output))
 
     #exp_ids = [1, 3, 7, 2, 4, 6]
     #ctrl_ids = [5, 9, 11, 8, 10, 12]
