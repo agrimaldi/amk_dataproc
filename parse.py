@@ -37,11 +37,13 @@ class Session:
             else:
                 self.essays[e] = [bin]
 
-    def meansBin(self, factor=1):
+    def meansBin(self, factor=1, normActivity=False):
         means = []
         for i in range(self.nbin):
             means.append(numpy.mean([v[i] for v in self.essays.values()]) / factor)
-        return means
+        if normActivity:
+            means = numpy.array(means) / self.meanActivity
+        return list(means)
 
     def meanActivity(self, factor=1):
         return numpy.mean(self.meansBin(factor))
