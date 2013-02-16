@@ -112,11 +112,15 @@ def main(args):
             output = session.metadata + session.meansBin(factor=args.factor)
             print >>args.outfile, '\t'.join(map(str, output))
     if args.subcmd == 'meanActivity':
-        pass
+        for session in sessions:
+            output = session.metadata + session.meanActivity(factor=args.factor)
+            print >>args.outfile, '\t'.join(map(str, output))
     if args.subcmd == 'meanMeansBin':
-        pass
+        output = sessions.meanMeansBin(factor=args.factor)
+        print >>args.outfile, '\t'.join(map(str, output))
     if args.subcmd == 'meanMeanActivity':
-        pass
+        res = sessions.meanMeanActivity(factor=args.factor)
+        print >>args.outfile, res
     if args.subcmd == 'smooth':
         for session in sessions:
             output = session.metadata + session.smooth(step=args.step, wdw=args.window, factor=args.factor)
