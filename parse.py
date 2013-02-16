@@ -98,6 +98,19 @@ def sem(array):
     return numpy.std(array) / math.sqrt(len(array))
 
 
+def eta_squared(ref, c):
+    """Calcule l'eta2, soit la superposition des courbes, entre deux
+lignes de données
+    Admet 2 arguments, soit 2 lignes de tableau : la ligne du tableau
+servant de référence et la ligne à comparer """
+    mysum=sum([(ref[k]+c[k])**2 for k in range(len(ref))])
+    snorm=sum([ref[k]**2+c[k]**2 for k in range(len(ref))])
+    sNorm_square = (sum(ref)+sum(c))**2/(len(ref)+len(c))
+    sst = mysum/2 - sNorm_square
+    sstot = snorm - sNorm_square
+    eta2 = sst/sstot
+    return eta2
+
 
 def main(args):
 
