@@ -2,6 +2,16 @@ options(width=230)
 library(reshape2)
 library(ggplot2)
 
+std = function(x, s) {
+    x = x[, s]
+    sd(x) / sqrt(length(x))
+}
+
+m.mean = function(x, s) {
+    x = x[, s]
+    mean(x)
+}
+
 a = read.table('./ctxtA.tsv', header=F, sep='\t')
 b = read.table('./ctxtB.tsv', header=F, sep='\t')
 
@@ -18,24 +28,25 @@ a = a[order(a$Date), ]
 a$week = rep(1:8, each=nrow(a)/8)
 a = a[, c('context', 'hole', 'env', 'user', 'prog', 'session', 'cage', 'pass', 'ratID', 'week', 'Date', 'hour', bin.names)]
 
-dd = data.frame()
+#dd = data.frame()
+#ss = data.frame()
 
-for (hole in holes) {
-    means = ddply(a[a$hole == hole, ], .(week), .fun=mean)
-    means = means[order(unique(means$week)), ]
-    sems = ddply(a[a$hole == hole, ], .(week), .fun=sd)
-    sems = sems[order(unique(sems$week)), ]
-    dd = rbind(dd, means)
-}
+means = ddply(a, .(week, hole), .fun=m.mean, 13:ncol(a))
+sems = ddply(a, .(week, hole), .fun=std, 13:ncol(a))
 
-colnames(dd) = colnames(a)
+means = melt(means, id.vars=c('hole', 'week'), value.name='bin')
+colnames(means) = c('hole', 'week', 'bin', 'Mean')
+sems = melt(sems, id.vars=c('hole', 'week'), value.name='bin')
+colnames(sems) = c('hole', 'week', 'bin', 'SEM')
 
-dd = melt(dd, id.vars=c('context', 'hole', 'env', 'user', 'prog', 'session', 'cage', 'pass', 'ratID', 'week', 'Date', 'hour'))
+dd = merge(means, sems, by=1:3)
 
-a.plot = ggplot(data=dd, aes(x=variable, y=value, color=factor(hole))) +
-         geom_line(aes(group=interaction(week, hole))) +
-         geom_point() +
-         facet_wrap(~ week) +
-         xlab('bla')
+a.plot = ggplot(data=dd, aes(x=bin, y=Mean, color=factor(hole))) +
+         geom_line(aes(group=interaction(week, hole)), size=1) +
+         #geom_point() +
+         geom_errorbar(aes(ymin=Mean-SEM, ymax=Mean+SEM), color='black', size=0.25) +
+         facet_wrap(~ week, nrow=4, ncol=2) +
+         xlab('Time') + ylab('Mean Hole Entry') +
+         theme(panel.background=element_rect(fill='white'))
 
 print(a.plot)
