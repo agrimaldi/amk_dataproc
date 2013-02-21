@@ -9,7 +9,7 @@ std = function(x, s) {
 
 m.mean = function(x, s) {
     x = x[, s]
-    mean(x)
+    colMeans(x)
 }
 
 a = read.table('./ctxtA.tsv', header=F, sep='\t')
@@ -27,11 +27,18 @@ a$Date = as.Date(a$Date, format='%d/%m/%Y')
 
 a$activity = rowMeans(a[, c(12:ncol(a))])
 
+dd = a[c('hole', 'activity')]
+
+pw.t.test = pairwise.t.test(dd$activity, dd$hole)
+
 means = ddply(.data=a, .variables=.(hole), .fun=m.mean, 12:ncol(a))
 sems = ddply(.data=a, .variables=.(hole), .fun=std, 12:ncol(a))
 
 d = data.frame(hole=holes, mmean=means$activity, sem=sems$activity)
 d$hole = as.factor(d$hole)
+
+
+
 
 myplot = ggplot(data=d, aes(x=hole, y=mmean)) +
          geom_errorbar(aes(ymin=mmean-sem, ymax=mmean+sem), width=0.25) +
