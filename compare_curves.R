@@ -59,13 +59,24 @@ a.plot = ggplot(data=dd, aes(x=bin, y=Mean, linetype=factor(hole))) +
          scale_x_discrete(breaks=c(1,15,30,45)) +
          scale_linetype_manual(breaks = 1:5, values = c('solid', 'dashed', 'dotted','dotdash', 'longdash'), labels = 1:5) +
          facet_wrap(~ week, nrow=4, ncol=2) +
-         xlab('Time') + ylab('Mean Hole Entry') +
+         xlab('Time (sec)') + ylab('Mean Hole Entry') +
          labs(linetype='Hole') +
          theme(
                panel.background=element_rect(fill='white'),
+               panel.grid=element_blank(),
                strip.background=element_rect(fill='white'),
                strip.text=element_text(size=18),
-               panel.grid=element_blank(),
+               axis.title=element_text(size=20),
+               axis.title.x=element_text(vjust=-0.5),
+               axis.title.y=element_text(vjust=0.3),
+               axis.text=element_text(size=14),
+               legend.title=element_text(size=20),
+               legend.margin=unit(0.5,'cm'),
+               legend.key = element_rect(fill="white"),
+               legend.key.width=unit(3,'cm'),
+               legend.key.height=unit(1,'cm'),
+               legend.text=element_text(size=15)
+               
                
          )
 #print(a.plot)
