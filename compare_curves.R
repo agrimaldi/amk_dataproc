@@ -48,6 +48,7 @@ sems = melt(sems, id.vars=c('hole', 'week'), value.name='bin')
 colnames(sems) = c('hole', 'week', 'bin', 'SEM')
 
 dd = merge(means, sems, by=1:3)
+dd$week = factor(dd$week, labels = c("week 1", "week 2", "week 3", "week 4", "week 5", "week 6", "week 7", "week 8"))
 a.plot = ggplot(data=dd, aes(x=bin, y=Mean, linetype=factor(hole))) +
          geom_ribbon(
                      aes(ymin=Mean-SEM, ymax=Mean+SEM, group=interaction(week, hole)),
