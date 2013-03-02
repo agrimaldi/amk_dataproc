@@ -64,10 +64,12 @@ a.plot = ggplot(data=dd, aes(x=bin, y=Mean, linetype=factor(hole))) +
          theme(
                panel.background=element_rect(fill='white'),
                strip.background=element_rect(fill='white'),
-               panel.grid=element_blank()
+               strip.text=element_text(size=18),
+               panel.grid=element_blank(),
+               
          )
-print(a.plot)
-#ggsave('learning-curve_A_manualMean.png', scale=1.5)
+#print(a.plot)
+ggsave('learning-curve_A_manualMean.png', scale=2)
 
 # Test with automatic smoothing
 #dd = melt(a[, c('hole', 'week', bin.names)], id.vars=c('hole', 'week'))
