@@ -11,7 +11,7 @@ std = function(x, s) {
 
 m.mean = function(x, s) {
     x = x[, s]
-    mean(x)
+    colMeans(x)
 }
 
 eta.square = function(ref, x) {
@@ -29,7 +29,8 @@ a = read.table('./ctxtA2.txt', header=F, sep='\t')
 b = read.table('./ctxtB.txt', header=F, sep='\t')
 
 # List dates to keep
-whitelist = c('14/06/2010', '15/06/2010', '16/06/2010', '17/06/2010', '18/06/2010')
+#whitelist = c('14/06/2010', '15/06/2010', '16/06/2010', '17/06/2010', '18/06/2010')
+blacklist = c('21/06/2010')
 # Holes to keep
 aholes = c(2, 3)
 bholes = c(3, 4)
@@ -39,7 +40,8 @@ bin.names = c()
 for (i in 1:(ncol(a)-11)) { bin.names = c(bin.names, i) }
 colnames(a) = c('context', 'hole', 'env', 'user', 'prog', 'session', 'cage', 'pass', 'ratID', 'Date', 'hour', bin.names)
 a = a[a$hole %in% aholes, ]
-a = a[(a$Date %in% whitelist), ]
+#a = a[(a$Date %in% whitelist), ]
+a = a[!(a$Date %in% blacklist), ]
 a$Date = as.Date(a$Date, format='%d/%m/%Y')
 a = a[order(a$Date), ]
 a$week = rep(1:8, each=nrow(a)/8)
@@ -50,7 +52,8 @@ bin.names = c()
 for (i in 1:(ncol(b)-11)) { bin.names = c(bin.names, i) }
 colnames(b) = c('context', 'hole', 'env', 'user', 'prog', 'session', 'cage', 'pass', 'ratID', 'Date', 'hour', bin.names)
 b = b[b$hole %in% bholes, ]
-b = b[(b$Date %in% whitelist), ]
+#b = b[(b$Date %in% whitelist), ]
+b = b[!(b$Date %in% blacklist), ]
 b$Date = as.Date(b$Date, format='%d/%m/%Y')
 b = b[order(b$Date), ]
 b$week = rep(1:8, each=nrow(b)/8)
@@ -59,14 +62,16 @@ b = b[, c('context', 'hole', 'env', 'user', 'prog', 'session', 'cage', 'pass', '
 
 
 # Mean for each hole
-a.means = ddply(a, .(hole), .fun=m.mean, 13:ncol(a))
+print(dim(a))
+a.means = ddply(a, .(week, hole), .fun=m.mean, 13:ncol(a))
+#print(head(a.means))
+a.means = a.means[a.means$week==8, ]
 
 # Smoothing
 # width = window width
 # by = step
-a.hole3.scaled = rollapply(as.vector(unlist(c(a.means[1, 2:ncol(a.means)]))), width=1, by=1, FUN=mean, partial=T)
-a.hole2.scaled = rollapply(as.vector(unlist(c(a.means[2, 2:ncol(a.means)]))), width=1, by=1, FUN=mean, partial=T)
-plot(1:45, a.hole2.scaled)
+a.hole3.scaled = rollapply(as.vector(unlist(c(a.means[1, 3:ncol(a.means)]))), width=1, by=1, FUN=mean, partial=T)
+a.hole2.scaled = rollapply(as.vector(unlist(c(a.means[2, 3:ncol(a.means)]))), width=1, by=1, FUN=mean, partial=T)
 
 # Y normalisation
 a.hole3.scaled.ynorm = a.hole3.scaled / mean(a.hole3.scaled)
@@ -93,18 +98,15 @@ b.hole4.scaled.ynorm = b.hole4.scaled / mean(b.hole4.scaled)
 
 
 # ETA squared
-eta.sq = eta.square(a.hole2.scaled.ynorm, b.hole4.scaled.ynorm)
+eta.sq = eta.square(b.hole3.scaled.ynorm, b.hole4.scaled.ynorm)
 
 
 mydata = data.frame(a=a.hole2.scaled.ynorm, b=b.hole4.scaled.ynorm, bin=1:30)
-print(mydata)
-#mydata = melt(mydata, id=bin)
-#print(mydata)
-#myplot = ggplot(data=mydata) +
-    #geom_line(aes(x=bin, y=b)) +
-    #geom_line(aes(x=bin, y=a))
+mydata = melt(mydata, id=c("bin"))
+myplot = ggplot(data=mydata, aes(x=bin, y=value, color=variable)) +
+    geom_line(aes(group=variable))
 
-#print(myplot)
+print(myplot)
 print(eta.sq)
 
 #means.scaled = ddply(means, .(hole), .fun=rollapply, width=3, by=2, FUN=mean, partial=T)
