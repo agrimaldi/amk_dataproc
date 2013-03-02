@@ -56,6 +56,7 @@ a.plot = ggplot(data=dd, aes(x=bin, y=Mean, linetype=factor(hole))) +
                     ) +
          geom_line(aes(group=interaction(week, hole)), size=0.8) +
          #geom_errorbar(aes(ymin=Mean-SEM, ymax=Mean+SEM), color='black', size=0.25) +
+         scale_x_discrete(breaks=c(1,15,30,45)) +
          facet_wrap(~ week, nrow=4, ncol=2) +
          xlab('Time') + ylab('Mean Hole Entry') +
          labs(linetype='Hole') +
