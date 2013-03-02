@@ -60,7 +60,8 @@ a.plot = ggplot(data=dd, aes(x=bin, y=Mean, linetype=factor(hole))) +
          xlab('Time') + ylab('Mean Hole Entry') +
          labs(linetype='Hole') +
          theme(
-               panel.background=element_rect(fill='white')
+               panel.background=element_rect(fill='white'),
+               strip.background=element_rect(fill='white')
          )
 print(a.plot)
 #ggsave('learning-curve_A_manualMean.png', scale=1.5)
