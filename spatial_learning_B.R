@@ -12,8 +12,8 @@ m.mean = function(x, s) {
     colMeans(x)
 }
 
-a = read.table('./aftershiftA.txt', header=F, sep='\t')
-#a = read.table('./aftershiftB.txt', header=F, sep='\t')
+#a = read.table('./aftershiftA.txt', header=F, sep='\t')
+a = read.table('./aftershiftB.txt', header=F, sep='\t')
 
 whitelist = c('23/06/2010')
 holes = c(1, 2, 3, 4, 5)
@@ -50,19 +50,23 @@ colnames(d) = c('hole', 'group', 'mean', 'sem')
 
 
 myplot = ggplot(data=d, aes(x=hole, y=mean, fill=factor(group, labels=c('Control', 'Shifted')))) +
-  geom_bar(color='black', position='dodge', stat='identity') +
+  geom_bar(position='dodge', stat='identity') +
+  geom_bar(color='black', position='dodge', stat='identity', show_guide=FALSE) +
   geom_errorbar(aes(ymin=mean-sem, ymax=mean+sem), width=0.25, position=position_dodge(width=0.9)) +  
-  xlab('Hole') + ylab('Entry / second') +
+  ylim(0, 0.9) +
+  xlab('Hole') + ylab('Mean Entry / second') +
   scale_fill_grey(start=0.9, end=0.3) +
   theme_bw() +
   theme(
     panel.grid.major.x = element_blank(),
     panel.grid.minor = element_blank(),
+    panel.grid=element_blank(),
     axis.title = element_text(size=20),
     axis.title.x = element_text(vjust=-0.3),
     axis.title.y = element_text(vjust=0.2),
     axis.text = element_text(size=18),
     legend.title = element_blank(),
+    legend.key = element_rect(colour = 'black'),
     legend.text = element_text(size=18)
   )
 
