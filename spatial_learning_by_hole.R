@@ -1,6 +1,7 @@
 options(width=230)
 library(reshape2)
 library(ggplot2)
+library(plyr)
 
 std = function(x, s) {
     x = x[, s]
@@ -12,8 +13,8 @@ m.mean = function(x, s) {
     colMeans(x)
 }
 
-a = read.table('./aftershiftA.txt', header=F, sep='\t')
-#a = read.table('./aftershiftB.txt', header=F, sep='\t')
+#a = read.table('./aftershiftA.txt', header=F, sep='\t')
+a = read.table('./aftershiftB.txt', header=F, sep='\t')
 
 #whitelist = c('23/06/2010')
 holes = c(1, 2, 3, 4, 5)
