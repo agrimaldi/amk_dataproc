@@ -58,7 +58,7 @@ a.plot = ggplot(data=dd, aes(x=bin, y=Mean, linetype=factor(hole))) +
          #geom_errorbar(aes(ymin=Mean-SEM, ymax=Mean+SEM), color='black', size=0.25) +
          scale_x_discrete(breaks=c(1,15,30,45)) +
          scale_linetype_manual(breaks = 1:5, values = c('solid', 'dashed', 'dotted','dotdash', 'longdash'), labels = 1:5) +
-         facet_wrap(~ week, nrow=4, ncol=2) +
+         facet_wrap(~ week, nrow=2, ncol=4) +
          xlab('Time (sec)') + ylab('Mean Hole Entry') +
          labs(linetype='Hole') +
          theme(
@@ -80,7 +80,7 @@ a.plot = ggplot(data=dd, aes(x=bin, y=Mean, linetype=factor(hole))) +
                
          )
 #print(a.plot)
-ggsave('learning-curve_A_manualMean.png', scale=2)
+ggsave('learning-curve_A_manualMean.png', width=20, height=12)
 
 # Test with automatic smoothing
 #dd = melt(a[, c('hole', 'week', bin.names)], id.vars=c('hole', 'week'))

@@ -41,8 +41,7 @@ sems = melt(sems, id.vars=c('hole', 'Date'), value.name='bin')
 colnames(sems) = c('hole', 'Date', 'bin', 'SEM')
 
 dd = merge(means, sems, by=1:3)
-#dd$week = factor(dd$week, labels = c("week 1", "week 2", "week 3", "week 4", "week 5", "week 6", "week 7", "week 8"))
-dd$Date = as.factor(dd$Date)
+dd$Date = factor(dd$Date, labels = c("day 1", "day 2", "day 3", "day 4", "day 5", "day 6", "day 7", "day 8", "day 9", "day 10"))
 a.plot = ggplot(data=dd, aes(x=bin, y=Mean, linetype=factor(hole))) +
          geom_ribbon(
                      aes(ymin=Mean-SEM, ymax=Mean+SEM, group=interaction(Date, hole)),
@@ -52,7 +51,7 @@ a.plot = ggplot(data=dd, aes(x=bin, y=Mean, linetype=factor(hole))) +
          #geom_errorbar(aes(ymin=Mean-SEM, ymax=Mean+SEM), color='black', size=0.25) +
          scale_x_discrete(breaks=c(1, 15, 30, 45, 60), labels=c(1, 30, 60, 90, 120)) +
          scale_linetype_manual(breaks = 1:5, values = c('solid', 'dashed', 'dotted','dotdash', 'longdash'), labels = 1:5) +
-         facet_wrap(~ Date, nrow=4, ncol=3) +
+         facet_wrap(~ Date, nrow=5, ncol=2) +
          xlab('Time (sec)') + ylab('Mean Hole Entry') +
          labs(linetype='Hole') +
          theme(
