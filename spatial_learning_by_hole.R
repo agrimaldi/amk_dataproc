@@ -61,6 +61,7 @@ myplot = ggplot(data=d, aes(x=Date, y=mean, fill=factor(group, labels=c('Control
   geom_errorbar(aes(ymin=mean-sem, ymax=mean+sem), width=0.25, position=position_dodge(width=0.9)) +
   #facet_grid(Date ~ hole) +
   scale_x_discrete(labels=c('Before','After')) +
+  ylim(0, 0.8) +
   xlab('') + ylab('Mean Entry / second') +
   scale_fill_grey(start=0.9, end=0.3) +
   theme_bw() +
@@ -68,15 +69,15 @@ myplot = ggplot(data=d, aes(x=Date, y=mean, fill=factor(group, labels=c('Control
     panel.grid.major.x = element_blank(),
     panel.grid.minor = element_blank(),
     panel.grid = element_blank(),
-    axis.title = element_text(size=24),
+    axis.title = element_text(size=32),
     #axis.text.x = element_text(vjust=-0.4),
     axis.ticks.margin = unit(5, 'mm'),
     #axis.text.x = element_blank('x','y'),
     axis.title.y = element_text(vjust=0.2),
-    axis.text = element_text(size=20),
+    axis.text = element_text(size=30),
     legend.title = element_blank(),
     legend.key = element_rect(colour = 'black'),
-    legend.text = element_text(size=20)
+    legend.text = element_text(size=30)
   )
 
 print(myplot)
