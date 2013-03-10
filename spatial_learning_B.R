@@ -64,11 +64,14 @@ for (whitelist in allwhitelist) {
       panel.grid=element_blank(),
       axis.title = element_text(size=30),
       axis.title.x = element_text(vjust=-0.3),
-      axis.title.y = element_text(vjust=0.2),
+      #axis.title.y = element_text(vjust=0.07),
       axis.text = element_text(size=22),
       legend.title = element_blank(),
       legend.key = element_rect(colour = 'black'),
-      legend.text = element_text(size=24)
+      legend.key.width=unit(1,'cm'),
+      legend.key.height=unit(1,'cm'),
+      legend.text = element_text(size=28)
+      
     )
   
   print(myplot)
