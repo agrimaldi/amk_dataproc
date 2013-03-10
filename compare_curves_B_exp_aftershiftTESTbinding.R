@@ -28,8 +28,8 @@ colnames(a) = c('context', 'hole', 'env', 'user', 'prog', 'session', 'cage', 'pa
 a = a[a$hole %in% holes, ]
 a = a[a$Date %in% whitelist, ]
 a$Date = as.Date(a$Date, format='%d/%m/%Y')
-a$group = 'exptl'
-a[a$ratID %in% exptl, ]$group = 'ctrl'
+a$group = 'ctrl'
+a[a$ratID %in% exptl, ]$group = 'exptl'
 a = a[order(a$Date), ]
 a = a[a$group == 'exptl', ]
 a$group = NULL
@@ -54,6 +54,7 @@ a.plot = ggplot(data=dd, aes(x=bin, y=Mean, linetype=factor(hole))) +
          scale_x_discrete(breaks=c(1, 15, 30, 45, 60), labels=c(1, 30, 60, 90, 120)) +
          scale_linetype_manual(breaks = 1:5, values = c('solid', 'dashed', 'dotted','dotdash', 'longdash'), labels = 1:5) +
          xlab('Time (sec)') + ylab('Mean Hole Entry') +
+         ylim(0,0.4) +
          labs(linetype='Hole') +
          theme(
                panel.background=element_rect(fill='white'),
@@ -61,13 +62,13 @@ a.plot = ggplot(data=dd, aes(x=bin, y=Mean, linetype=factor(hole))) +
                axis.title=element_text(size=30),
                axis.title.x=element_text(vjust=-0.5),
                axis.title.y=element_text(vjust=0.3),
-               axis.text=element_text(size=16),
+               axis.text=element_text(size=18),
                legend.title=element_text(size=32),
                legend.margin=unit(0.5,'cm'),
                legend.key = element_rect(fill="white"),
                legend.key.width=unit(3,'cm'),
                legend.key.height=unit(1,'cm'),
-               legend.text=element_text(size=18)
+               legend.text=element_text(size=20)
          )
 ggsave('learning-curve_B_exptl_aftershift_binding.png', width=15, height=8, units="cm", scale=2)
 
