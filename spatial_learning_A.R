@@ -62,13 +62,13 @@ for (whitelist in allwhitelist) {
       panel.grid.major.x = element_blank(),
       panel.grid.minor = element_blank(),
       panel.grid=element_blank(),
-      axis.title = element_text(size=20),
+      axis.title = element_text(size=30),
       axis.title.x = element_text(vjust=-0.3),
       axis.title.y = element_text(vjust=0.2),
-      axis.text = element_text(size=18),
+      axis.text = element_text(size=22),
       legend.title = element_blank(),
       legend.key = element_rect(colour = 'black'),
-      legend.text = element_text(size=18)
+      legend.text = element_text(size=24)
     )
   
   print(myplot)
