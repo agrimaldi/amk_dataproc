@@ -1,6 +1,7 @@
 options(width=230)
 library(plyr)
 library(reshape2)
+library(grid)
 library(ggplot2)
 
 std = function(x, s) {
@@ -64,6 +65,7 @@ a.plot = ggplot(data=dd, aes(x=bin, y=Mean, linetype=factor(hole))) +
          theme(
                panel.background=element_rect(fill='white'),
                panel.grid=element_blank(),
+               panel.margin=unit(0.4,'cm'),
                strip.background=element_rect(fill='white'),
                strip.text=element_text(size=18),
                axis.title=element_text(size=20),
@@ -73,14 +75,14 @@ a.plot = ggplot(data=dd, aes(x=bin, y=Mean, linetype=factor(hole))) +
                legend.title=element_text(size=20),
                legend.margin=unit(0.5,'cm'),
                legend.key = element_rect(fill="white"),
-               legend.key.width=unit(3,'cm'),
-               legend.key.height=unit(1,'cm'),
+               legend.key.width=unit(2,"cm"),
+               legend.key.height=unit(0.7,"cm"),
                legend.text=element_text(size=15)
                
                
          )
 #print(a.plot)
-ggsave('learning-curve_A_manualMean.png', width=20, height=12)
+ggsave('learning-curve_A_manualMean.png', width=20, height=12, units="cm")
 
 # Test with automatic smoothing
 #dd = melt(a[, c('hole', 'week', bin.names)], id.vars=c('hole', 'week'))
