@@ -84,7 +84,8 @@ colnames(mydata) = c('hole', 'bin', 'Mean')
 mydata$hole = factor(mydata$hole)
 
 myplot = ggplot(data=mydata, aes(x=bin, y=Mean)) +
-    geom_line(aes(group=hole, linetype=hole))
+    geom_line(aes(group=hole, linetype=hole)) +
+    geom_text(aes(label=paste('eta2 = ', round(eta.sq, 3), sep=''), x=2, y=1.5, hjust=0))
 
 print(myplot)
 print(eta.sq)
