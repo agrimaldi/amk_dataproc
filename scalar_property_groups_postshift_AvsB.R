@@ -26,12 +26,13 @@ eta.square = function(ref, x) {
     return(eta.sq)
 }
 
-format.data = function(rawdata, holes, dates) {
+format.data = function(rawdata, holes, dates, rats) {
     bin.names = 1:(ncol(rawdata)-11)
     colnames(rawdata) = c('context', 'hole', 'env', 'user', 'prog', 'session',
                     'cage', 'pass', 'ratID', 'Date', 'hour', bin.names)
     rawdata = rawdata[rawdata$hole %in% holes, ]
     rawdata = rawdata[rawdata$Date %in% dates, ]
+    rawdata = rawdata[rawdata$ratID %in% rats, ]
     rawdata$Date = as.Date(rawdata$Date, format='%d/%m/%Y')
     rawdata = rawdata[order(rawdata$Date), ]
 }
@@ -52,41 +53,42 @@ y.norm = function(rdata, method=mean) {
 }
 
 
-whitelist = c('14/06/2010', '15/06/2010', '16/06/2010', '17/06/2010', '18/06/2010')
-aholes = c(4)
-bholes = c(3)
+whitelist = c('07/07/2010')
+rats = c(1, 3, 7, 2, 4, 6)
+aholes = c(2)
+bholes = c(2)
 
-# context B
-a = read.table('./All_Data_B.txt', header=F, sep='\t')
-a = format.data(a, aholes, whitelist)
+# context A
+a = read.table('./All_Data_A.txt', header=F, sep='\t')
+a = format.data(a, aholes, whitelist, rats)
 a = scale.x(a, step=1, wdw=2)
 #a = translate.x(a)
-a = ddply(a, .(hole), .fun=m.mean, 12:ncol(a))
-a = melt(a, id.vars='hole', value.name='bin')
-#a = a[1:30, ]
+a = ddply(a, .(hole, context), .fun=m.mean, 12:ncol(a))
+a = melt(a, id.vars=c('hole', 'context'), value.name='bin')
+a = a[1:30, ]
 a = y.norm(a)
-colnames(a) = c('hole', 'bin', 'Mean')
+colnames(a) = c('hole', 'context', 'bin', 'Mean')
 
-#context A
+#context B
 b = read.table('./All_Data_B.txt', header=F, sep='\t')
-b = format.data(b, bholes, whitelist)
+b = format.data(b, bholes, whitelist, rats)
 b = scale.x(b, step=1, wdw=2)
-b = ddply(b, .(hole), .fun=m.mean, 12:ncol(b))
-b = melt(b, id.vars='hole', value.name='bin')
-#a = a[1:30, ]
+b = ddply(b, .(hole, context), .fun=m.mean, 12:ncol(b))
+b = melt(b, id.vars=c('hole', 'context'), value.name='bin')
+b = b[1:30, ]
 b = y.norm(b)
-colnames(b) = c('hole', 'bin', 'Mean')
+colnames(b) = c('hole', 'context', 'bin', 'Mean')
 
 # ETA squared
 eta.sq = eta.square(a$Mean, b$Mean)
 
 
 mydata = rbind(a, b)
-colnames(mydata) = c('hole', 'bin', 'Mean')
+colnames(mydata) = c('hole', 'context', 'bin', 'Mean')
 mydata$hole = factor(mydata$hole)
 
 myplot = ggplot(data=mydata, aes(x=bin, y=Mean)) +
-        geom_line(aes(group=hole, linetype=hole)) +
+        geom_line(aes(group=context, linetype=context)) +
         geom_text(aes(label=paste('eta2 = ', round(eta.sq, 3), sep=''), x=2, y=1.5, hjust=0))+
         scale_x_discrete(breaks=c(1, 15, 30, 45, 60), labels=c(1, 30, 60, 90, 120)) +
         xlab('Time (sec)') +
@@ -108,3 +110,4 @@ myplot = ggplot(data=mydata, aes(x=bin, y=Mean)) +
 
 print(myplot)
 print(eta.sq)
+ggsave(paste('scalar_exptl_AvsB', aholes, bholes, '.jpeg', sep='_'), scale=2)
