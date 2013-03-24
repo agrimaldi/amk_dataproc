@@ -60,24 +60,25 @@ whitelist = c('14/06/2010', '15/06/2010', '16/06/2010', '17/06/2010', '18/06/201
 aholes = c(2)
 bholes = c(4)
 
-# context A
-a = read.table('./All_Data_A.txt', header=F, sep='\t')
+# context B
+a = read.table('./All_Data_B.txt', header=F, sep='\t')
 a = format.data(a, aholes, whitelist)
-#a = scale.x(a, step=1, wdw=2)
+a = scale.x(a, step=1, wdw=3)
 a = translate.x(a, 15)
 a = ddply(a, .(hole, context), .fun=m.mean, 12:ncol(a))
 a = melt(a, id.vars=c('hole', 'context'), value.name='bin')
-a = a[15:45, ]
+a = a[15:60, ]
 a = y.norm(a)
 colnames(a) = c('hole', 'context', 'bin', 'Mean')
 
 #context B
 b = read.table('./All_Data_B.txt', header=F, sep='\t')
 b = format.data(b, bholes, whitelist)
+b = translate.x(b, 15)
 b = scale.x(b, step=1, wdw=3)
 b = ddply(b, .(hole, context), .fun=m.mean, 12:ncol(b))
 b = melt(b, id.vars=c('hole','context'), value.name='bin')
-b = b[15:45, ]
+b = b[15:60, ]
 b = y.norm(b)
 colnames(b) = c('hole', 'context', 'bin', 'Mean')
 
