@@ -51,7 +51,7 @@ a.plot = ggplot(data=dd, aes(x=bin, y=Mean, linetype=factor(hole))) +
                     ) +
          geom_line(aes(group=interaction(Date, hole)), size=0.8) +
          #geom_errorbar(aes(ymin=Mean-SEM, ymax=Mean+SEM), color='black', size=0.25) +
-         scale_x_discrete(breaks=c(1, 15, 30, 45, 60), labels=c(1, 30, 60, 90, 120)) +
+         scale_x_discrete(breaks=c(1, 15, 30, 45), labels=c(1, 15, 30, 45)) +
          scale_linetype_manual(breaks = 1:5, values = c('solid', 'dashed', 'dotted','dotdash', 'longdash'), labels = 1:5) +
          xlab('Time (sec)') + ylab('Mean Hole Entry') +
          ylim(0,1.5) +

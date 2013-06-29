@@ -15,7 +15,7 @@ m.mean = function(x, s) {
 
 a = read.table('./aftershiftA.txt', header=F, sep='\t')
 
-allwhitelist = c('07/07/2010')
+allwhitelist = c('23/06/2010', '24/06/2010', '25/06/2010', '28/06/2010', '29/06/2010', '30/06/2010', '02/07/2010', '05/07/2010', '06/07/2010','07/07/2010')
 holes = c(1, 2, 3, 4, 5)
 ctrl = c(5, 9, 11, 8, 10, 12)
 exptl = c(1, 3, 7, 2, 4, 6)
@@ -48,33 +48,37 @@ for (whitelist in allwhitelist) {
   
   d = merge(means, sems, by=c('hole', 'group'))
   colnames(d) = c('hole', 'group', 'mean', 'sem')
-
   
- myplot = ggplot(data=d, aes(x=hole, y=mean, fill=factor(group, labels=c('Control', 'Shifted')))) +
-   geom_bar(position='dodge', stat='identity') +
-   geom_bar(color='black', position='dodge', stat='identity', show_guide=FALSE) +
-   geom_errorbar(aes(ymin=mean-sem, ymax=mean+sem), width=0.25, position=position_dodge(width=0.9)) +  
-   ylim(0, 0.9) +
-   xlab('Hole') + ylab('Mean Entry / second') +
-   scale_fill_grey(start=0.9, end=0.3) +
-   theme_bw() +
-   theme(
-     panel.grid.major.x = element_blank(),
-     panel.grid.minor = element_blank(),
-     panel.grid=element_blank(),
-     axis.title = element_text(size=30),
-     axis.title.x = element_text(vjust=-0.3),
-     #axis.title.y = element_text(vjust=0.1),
-     axis.text = element_text(size=22),
-     legend.title = element_blank(),
-     legend.key = element_rect(colour = 'black'),
-     legend.key.width=unit(1,'cm'),
-     legend.key.height=unit(1,'cm'),
-     legend.text = element_text(size=28)
-   )
+t = data.frame(means$activity)
+  ActivityTotal = sum(means)
   
- print(myplot)
- whitedate = gsub('/', '-', whitelist)
- ggsave(paste('spatial_learning_A', whitedate, '.png', sep='_'), scale=2)
   
+  
+#  myplot = ggplot(data=d, aes(x=hole, y=mean, fill=factor(group, labels=c('Control', 'Shifted')))) +
+#    geom_bar(position='dodge', stat='identity') +
+#    geom_bar(color='black', position='dodge', stat='identity', show_guide=FALSE) +
+#    geom_errorbar(aes(ymin=mean-sem, ymax=mean+sem), width=0.25, position=position_dodge(width=0.9)) +  
+#    ylim(0, 0.9) +
+#    xlab('Hole') + ylab('Mean Entry / second') +
+#    scale_fill_grey(start=0.9, end=0.3) +
+#    theme_bw() +
+#    theme(
+#      panel.grid.major.x = element_blank(),
+#      panel.grid.minor = element_blank(),
+#      panel.grid=element_blank(),
+#      axis.title = element_text(size=30),
+#      axis.title.x = element_text(vjust=-0.3),
+#      #axis.title.y = element_text(vjust=0.1),
+#      axis.text = element_text(size=22),
+#      legend.title = element_blank(),
+#      legend.key = element_rect(colour = 'black'),
+#      legend.key.width=unit(1,'cm'),
+#      legend.key.height=unit(1,'cm'),
+#      legend.text = element_text(size=28)
+#    )
+  
+#  print(myplot)
+#  whitedate = gsub('/', '-', whitelist)
+#  ggsave(paste('spatial_learning_A', whitedate, '.png', sep='_'), scale=2)
+  return(activity)
 }

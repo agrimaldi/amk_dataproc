@@ -57,17 +57,17 @@ y.norm = function(rdata, method=mean) {
 
 
 whitelist = c('14/06/2010', '15/06/2010', '16/06/2010', '17/06/2010', '18/06/2010')
-aholes = c(2)
-bholes = c(4)
+aholes = c(4)
+bholes = c(3)
 
-# context A
-a = read.table('./All_Data_A.txt', header=F, sep='\t')
+# context B
+a = read.table('./All_Data_B.txt', header=F, sep='\t')
 a = format.data(a, aholes, whitelist)
-#a = scale.x(a, step=1, wdw=2)
-a = translate.x(a, 15)
+a = scale.x(a, step=1, wdw=3)
+#a = translate.x(a, 15)
 a = ddply(a, .(hole, context), .fun=m.mean, 12:ncol(a))
 a = melt(a, id.vars=c('hole', 'context'), value.name='bin')
-a = a[15:45, ]
+#a = a[1:30, ]
 a = y.norm(a)
 colnames(a) = c('hole', 'context', 'bin', 'Mean')
 
@@ -77,7 +77,7 @@ b = format.data(b, bholes, whitelist)
 b = scale.x(b, step=1, wdw=3)
 b = ddply(b, .(hole, context), .fun=m.mean, 12:ncol(b))
 b = melt(b, id.vars=c('hole','context'), value.name='bin')
-b = b[15:45, ]
+#b = b[15:45, ]
 b = y.norm(b)
 colnames(b) = c('hole', 'context', 'bin', 'Mean')
 
@@ -93,16 +93,17 @@ print(mydata)
 myplot = ggplot(data=mydata, aes(x=bin, y=Mean)) +
         geom_line(aes(group=c(hole), linetype=hole)) +
         geom_text(aes(label=paste('eta2 = ', round(eta.sq, 3), sep=''), x=2, y=1.5, hjust=0))+
-        scale_x_discrete(breaks=c(1, 15, 30, 45, 60), labels=c(1, 30, 60, 90, 120)) +
+        scale_x_discrete(breaks=c(), labels=c()) +
         xlab('Time (sec)') +
         theme(
           panel.grid.major.x = element_blank(),
           panel.grid.minor = element_blank(),
           panel.grid=element_blank(),
-          plot.background=element_blank(),
+          panel.background=element_rect(fill='white'),
+          strip.background=element_rect(fill='white'),
           axis.title = element_text(size=36),
           axis.title.x = element_text(vjust=-0.3),
-          axis.title.y = element_text(vjust=0.1),
+          axis.title.y = element_blank(),
           axis.text = element_text(size=28),
           #legend.title = element_blank(),
           legend.key = element_rect(colour = 'black'),
